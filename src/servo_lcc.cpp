@@ -68,9 +68,10 @@ void Servo_LCC::eventReceived(uint16_t index) {
   // Is this the toggle event for this servo?
   if (index == eventToggle) {
     // Start the servo moving to the other position.
-    //Serial.printf("\nServo %d moving to the other pos ", servoNumber);
+    Serial.printf("\nServo %d moving to the other pos ", servoNumber);
 
-    //Serial.printf(" current angle = %d", servoEasing.getCurrentAngle() );
+    Serial.println();
+    Serial.printf(" current angle = %d", servoEasing.getCurrentAngle() );
 
     // // If the servo is at position 0, move to position 2.
     // if (servoEasing.getCurrentAngle() == positions[0].getPositionAngle()) {
