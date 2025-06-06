@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <vector>
+#include "servo_easing.h"
 
 /**
  * Class Position_LCC represents one position in a servo.
@@ -53,6 +54,8 @@ class Servo_LCC {
 
     void eventReceived(uint16_t index);
 
+    void process();
+
     void print();
 
   private:
@@ -61,6 +64,10 @@ class Servo_LCC {
     uint16_t eventToggle;
 
     std::vector<Position_LCC> positions;
+
+    Servo servo;
+    ServoEasing servoEasing;
+
 
 };
 
