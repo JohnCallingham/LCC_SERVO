@@ -50,6 +50,13 @@ class Servo_LCC {
     
     void setEventToggle(uint16_t eventToggle) { this->eventToggle = eventToggle; }
 
+    /**
+     * Allows the initial angle, target angle and mid angle to all be set to position 1 (Mid).
+     */
+    void setInitialAngles(uint8_t initialAngle);
+
+    void setSendEventCallbackFunction(void (*sendEvent)(uint16_t eventIndexToSend)) { this->sendEvent = sendEvent; }
+
     bool eventIndexMatchesThisServo(uint16_t index);
 
     void eventReceived(uint16_t index);
@@ -58,6 +65,17 @@ class Servo_LCC {
 
     void print();
 
+    /**
+     * Need to arrange for the servo easing callback functions to 
+     * call here and then use the sendEvent() call back function to
+     * pass them back to main.cpp where the event will be sent.
+     */
+
+     /**
+      * Should we sent a leaving event if the servos moves from pos 1 (mid) to
+      * pos 1 (mid)?? DITTO for other positions? Should be reached instead??
+      */
+
   private:
     uint8_t servoNumber;
     uint8_t pin;
@@ -65,10 +83,13 @@ class Servo_LCC {
 
     std::vector<Position_LCC> positions;
 
+    // Call back function to send events.
+    void (*sendEvent) (uint16_t eventIndexToSend);
+
+    uint16_t getLeavingEventForCurrentAngle();
+
     Servo servo;
     ServoEasing servoEasing;
-
-
 };
 
 #endif
