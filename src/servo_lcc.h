@@ -31,7 +31,6 @@ class Position_LCC {
     uint16_t eventMove;
     uint16_t eventLeaving;
     uint16_t eventReached;
-
 };
 
 /**
@@ -61,20 +60,29 @@ class Servo_LCC {
 
     void eventReceived(uint16_t index);
 
+    /**
+     * Called when the ServoEasing object has moved its servo to any position.
+     * It determines the correct event and sends it.
+     */
+    void handleReachedAngle(uint8_t currentAngle, AngleDirection direction);
+
     void process();
 
     void print();
 
     /**
-     * Need to arrange for the servo easing callback functions to 
-     * call here and then use the sendEvent() call back function to
-     * pass them back to main.cpp where the event will be sent.
+     * servoEasing has been made public to allow the following;-
+     *  1. In ServoEasing::update() when the servo reaches any of the 3 positions
+     *     the code calls the callback function reachedAngle() which
+     *     calls reachedAngleCallbackFunction() in main.cpp.
+     *  2. reachedAngleCallbackFunction() calls Servo_LCC::handleReachedAngle()
+     *     for the appropriate Servo_LCC object.
+     *  3. Servo_LCC::handleReachedAngle() uses the current angle and direction to 
+     *     determine the appropriate event to send.
+     *  4. The callback function sendEventCallbackFunction() in main.cpp is
+     *     used to send the event.
      */
-
-     /**
-      * Should we sent a leaving event if the servos moves from pos 1 (mid) to
-      * pos 1 (mid)?? DITTO for other positions? Should be reached instead??
-      */
+    ServoEasing servoEasing;
 
   private:
     uint8_t servoNumber;
@@ -89,7 +97,6 @@ class Servo_LCC {
     uint16_t getLeavingEventForCurrentAngle();
 
     Servo servo;
-    ServoEasing servoEasing;
 };
 
 #endif
