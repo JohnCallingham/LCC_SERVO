@@ -58,11 +58,24 @@ void Servo_LCC::print() {
 }
 
 bool Servo_LCC::eventIndexMatchesThisServo(uint16_t index) {
+  //Serial.printf("\nin eventIndexMatchesThisServo() for index=0x%02X", index);
   if (index == this->eventToggle) return true;
 
   for (auto & position : positions) {
-    if (index == position.getEventMove()) return true;
+    if ((index == position.getEventMove()) ||
+        (index == position.getEventLeaving()) ||
+        (index == position.getEventReached())) return true;
   }
+
+  return false;
+}
+
+bool Servo_LCC::eventIndexMatchesCurrentState(uint16_t index) {
+  Serial.printf("\nin eventIndexMatchesCurrentState() for index 0x%02X", index);
+
+  /***
+   * TO DO: complete from here !!!
+   */
 
   return false;
 }

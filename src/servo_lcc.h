@@ -58,6 +58,8 @@ class Servo_LCC {
 
     bool eventIndexMatchesThisServo(uint16_t index);
 
+    bool eventIndexMatchesCurrentState(uint16_t index);
+
     void eventReceived(uint16_t index);
 
     /**
