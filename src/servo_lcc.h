@@ -68,6 +68,12 @@ class Servo_LCC {
      */
     void handleReachedAngle(uint8_t currentAngle, AngleDirection direction);
 
+    /***
+     * Called when sending initial events.
+     * Used to initialise JMRI when JMRI starts after the node has started.
+     */
+    void sendEventsForCurrentState();
+
     void process();
 
     void print();
