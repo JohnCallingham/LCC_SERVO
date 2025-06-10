@@ -18,6 +18,8 @@ Servo_LCC::Servo_LCC(uint8_t servoNumber, uint8_t pin) {
   this->servoNumber = servoNumber;
   this->pin = pin;
 
+  servo.attach(this->pin);
+
   servoEasing.initialise(servoNumber, &servo);
 }
 
