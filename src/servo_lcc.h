@@ -7,6 +7,13 @@
 #include <vector>
 
 /**
+ * #defines for the indexes to the positions vector.
+ */
+#define THROWN 0
+#define MID 1
+#define CLOSED 2
+
+/**
  * Class Position_LCC represents one position in a servo.
  */
 class Position_LCC {
@@ -18,9 +25,9 @@ class Position_LCC {
                 uint16_t eventLeaving,
                 uint16_t eventReached);
 
-    uint8_t getPositionNumber() { return this->positionNumber; }
-    const char *getPositionDescription() { return this->positionDescription; }
-    uint8_t getPositionAngle() { return this->positionAngle; }
+    uint8_t getNumber() { return this->positionNumber; }
+    const char *getDescription() { return this->positionDescription; }
+    uint8_t getAngle() { return this->positionAngle; }
     uint16_t getEventMove() { return this->eventMove; }
     uint16_t getEventLeaving() { return this->eventLeaving; }
     uint16_t getEventReached() { return this->eventReached; }
@@ -79,6 +86,9 @@ class Servo_LCC : public LCC_Node_Component_Base {
     void process();
 
     void print();
+
+    bool isThrown() { return (servoEasing.getCurrentAngle() == positions[THROWN].getAngle()) ? true : false; }
+    bool isClosed() { return (servoEasing.getCurrentAngle() == positions[CLOSED].getAngle()) ? true : false; }
 
     /**
      * servoEasing has been made public to allow the following;-

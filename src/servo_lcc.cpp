@@ -48,9 +48,9 @@ void Servo_LCC::print() {
   Serial.printf("\nServo pin=%d", this->pin);
 
   for (auto & position : positions) {
-    Serial.printf("\n Position number=%d", position.getPositionNumber());
-    Serial.printf("\n Position description=%s", position.getPositionDescription());
-    Serial.printf("\n Position angle=%d", position.getPositionAngle());
+    Serial.printf("\n Position number=%d", position.getNumber());
+    Serial.printf("\n Position description=%s", position.getDescription());
+    Serial.printf("\n Position angle=%d", position.getAngle());
     Serial.printf("\n Position event move=%d", position.getEventMove());
     Serial.printf("\n Position event leaving=%d", position.getEventLeaving());
     Serial.printf("\n Position event reached=%d", position.getEventReached());
@@ -59,18 +59,6 @@ void Servo_LCC::print() {
   Serial.printf("\neventToggle=%d", this->eventToggle);
 }
 
-// bool Servo_LCC::eventIndexMatchesThisServo(uint16_t index) {
-//   //Serial.printf("\nin eventIndexMatchesThisServo() for index=0x%02X", index);
-//   if (index == this->eventToggle) return true;
-
-//   for (auto & position : positions) {
-//     if ((index == position.getEventMove()) ||
-//         (index == position.getEventLeaving()) ||
-//         (index == position.getEventReached())) return true;
-//   }
-
-//   return false;
-// }
 bool Servo_LCC::eventIndexMatches(uint16_t index) {
   //Serial.printf("\nin eventIndexMatchesThisServo() for index=0x%02X", index);
   if (index == this->eventToggle) return true;
@@ -91,11 +79,11 @@ bool Servo_LCC::eventIndexMatchesCurrentState(uint16_t index) {
   for (auto & position : positions) {
     if (index == position.getEventReached()) {
       // Is the servo angle at this position?
-      if (servoEasing.getCurrentAngle() == position.getPositionAngle()) return true;
+      if (servoEasing.getCurrentAngle() == position.getAngle()) return true;
     }
     if (index == position.getEventLeaving()) {
       // Is the servo angle not at this position?
-      if (servoEasing.getCurrentAngle() != position.getPositionAngle()) return true;
+      if (servoEasing.getCurrentAngle() != position.getAngle()) return true;
     }
   }
 
@@ -112,23 +100,23 @@ void Servo_LCC::eventReceived(uint16_t index) {
     Serial.printf(" current angle = %d", servoEasing.getCurrentAngle() );
 
     // If the servo is at position 0 (Thrown), move to position 2 (Closed).
-    if (servoEasing.getCurrentAngle() == positions[0].getPositionAngle()) {
-      servoEasing.setTargetAngle(positions[2].getPositionAngle());
+    if (servoEasing.getCurrentAngle() == positions[THROWN].getAngle()) {
+      servoEasing.setTargetAngle(positions[CLOSED].getAngle());
       // Send the leaving event for this position.
-      if (sendEvent) sendEvent(positions[0].getEventLeaving());
+      if (sendEvent) sendEvent(positions[THROWN].getEventLeaving());
     }
 
     // If the servo is at position 1 (Mid), no movement, send mid reached event.
-    if (servoEasing.getCurrentAngle() == positions[1].getPositionAngle()) {
+    if (servoEasing.getCurrentAngle() == positions[MID].getAngle()) {
       // Send the reached event for this position.
-      if (sendEvent) sendEvent(positions[1].getEventReached());
+      if (sendEvent) sendEvent(positions[MID].getEventReached());
     }
 
     // If the servo is at position 2 (Closed), move to position 0 (Thrown).
-    if (servoEasing.getCurrentAngle() == positions[2].getPositionAngle()) {
-      servoEasing.setTargetAngle(positions[0].getPositionAngle());
+    if (servoEasing.getCurrentAngle() == positions[CLOSED].getAngle()) {
+      servoEasing.setTargetAngle(positions[THROWN].getAngle());
       // Send the leaving event for this position.
-      if (sendEvent) sendEvent(positions[2].getEventLeaving());
+      if (sendEvent) sendEvent(positions[CLOSED].getEventLeaving());
     }
 
     return;
@@ -141,15 +129,15 @@ void Servo_LCC::eventReceived(uint16_t index) {
   for (auto & targetPosition : positions) {
     if (index == targetPosition.getEventMove()) {
       // Check if the servo is already at this target position.
-      if (servoEasing.getCurrentAngle() == targetPosition.getPositionAngle()) {
+      if (servoEasing.getCurrentAngle() == targetPosition.getAngle()) {
         // Servo is already at the target position so just send the reached event.
         if (sendEvent) sendEvent(targetPosition.getEventReached());
       } else {
         // Start the servo moving to this position.
-        Serial.printf("\nServo %d moving to position %d", servoNumber, targetPosition.getPositionNumber());
+        Serial.printf("\nServo %d moving to position %d", servoNumber, targetPosition.getNumber());
 
         // Make the servo move to this position.
-        servoEasing.setTargetAngle(targetPosition.getPositionAngle());
+        servoEasing.setTargetAngle(targetPosition.getAngle());
 
         // Send the leaving event for this position.
         if (sendEvent) sendEvent(getLeavingEventForCurrentAngle());
@@ -161,7 +149,7 @@ void Servo_LCC::eventReceived(uint16_t index) {
 uint16_t Servo_LCC::getLeavingEventForCurrentAngle() {
   // Find the position object for the current angle.
   for (auto & position : positions) {
-    if (position.getPositionAngle() == servoEasing.getCurrentAngle()) {
+    if (position.getAngle() == servoEasing.getCurrentAngle()) {
       // Return the leaving event for this position.
       return position.getEventLeaving();
     }
@@ -172,35 +160,35 @@ uint16_t Servo_LCC::getLeavingEventForCurrentAngle() {
 
 void Servo_LCC::handleReachedAngle(uint8_t currentAngle, AngleDirection direction) {
   // Determine the position for the current angle.
-  if (currentAngle == positions[0].getPositionAngle()) {
-    if (sendEvent) sendEvent(positions[0].getEventReached());
-  } else if (currentAngle == positions[1].getPositionAngle()) {
+  if (currentAngle == positions[THROWN].getAngle()) {
+    if (sendEvent) sendEvent(positions[THROWN].getEventReached());
+  } else if (currentAngle == positions[MID].getAngle()) {
     // This is the mid position so send the appropriate event based on direction.
     if (direction == AngleDirection::INCREASING_ANGLE) {
-      if (sendEvent) sendEvent(positions[1].getEventReached());
+      if (sendEvent) sendEvent(positions[MID].getEventReached());
     } else {
-      if (sendEvent) sendEvent(positions[1].getEventLeaving());
+      if (sendEvent) sendEvent(positions[MID].getEventLeaving());
     }
-  } else if (currentAngle == positions[2].getPositionAngle()) {
-    if (sendEvent) sendEvent(positions[2].getEventReached());
+  } else if (currentAngle == positions[CLOSED].getAngle()) {
+    if (sendEvent) sendEvent(positions[CLOSED].getEventReached());
   }
 }
 
 void Servo_LCC::sendEventsForCurrentState() {
   // Handle the servo being in position 0 (Thrown).
-  if (servoEasing.getCurrentAngle() == positions[0].getPositionAngle()) {
-    if (sendEvent) sendEvent(positions[0].getEventReached());
+  if (servoEasing.getCurrentAngle() == positions[THROWN].getAngle()) {
+    if (sendEvent) sendEvent(positions[THROWN].getEventReached());
   }
 
   // Handle the servo being in position 2 (Closed).
-  if (servoEasing.getCurrentAngle() == positions[2].getPositionAngle()) {
-    if (sendEvent) sendEvent(positions[2].getEventReached());
+  if (servoEasing.getCurrentAngle() == positions[CLOSED].getAngle()) {
+    if (sendEvent) sendEvent(positions[CLOSED].getEventReached());
   }
 
   // Handle the servo being in position 1 (Mid).
-  if (servoEasing.getCurrentAngle() == positions[1].getPositionAngle()) {
-    if (sendEvent) sendEvent(positions[0].getEventLeaving());
-    if (sendEvent) sendEvent(positions[2].getEventLeaving());
+  if (servoEasing.getCurrentAngle() == positions[MID].getAngle()) {
+    if (sendEvent) sendEvent(positions[THROWN].getEventLeaving());
+    if (sendEvent) sendEvent(positions[CLOSED].getEventLeaving());
   }
 }
 
