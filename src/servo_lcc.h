@@ -2,8 +2,9 @@
 #define SERVO_LCC_H
 
 #include <Arduino.h>
-#include <vector>
+#include "LCC_Node_Component_Base.h"
 #include "servo_easing.h"
+#include <vector>
 
 /**
  * Class Position_LCC represents one position in a servo.
@@ -36,7 +37,7 @@ class Position_LCC {
 /**
  * Class Servo_LCC represents one servo.
  */
-class Servo_LCC {
+class Servo_LCC : public LCC_Node_Component_Base {
   public:
     Servo_LCC(uint8_t servoNumber, uint8_t pin);
 
@@ -54,9 +55,10 @@ class Servo_LCC {
      */
     void setInitialAngles(uint8_t initialAngle);
 
-    void setSendEventCallbackFunction(void (*sendEvent)(uint16_t eventIndexToSend)) { this->sendEvent = sendEvent; }
+    // void setSendEventCallbackFunction(void (*sendEvent)(uint16_t eventIndexToSend)) { this->sendEvent = sendEvent; }
 
-    bool eventIndexMatchesThisServo(uint16_t index);
+    // bool eventIndexMatchesThisServo(uint16_t index);
+    bool eventIndexMatches(uint16_t index) override;
 
     bool eventIndexMatchesCurrentState(uint16_t index);
 
@@ -99,8 +101,8 @@ class Servo_LCC {
 
     std::vector<Position_LCC> positions;
 
-    // Call back function to send events.
-    void (*sendEvent) (uint16_t eventIndexToSend);
+    // // Call back function to send events.
+    // void (*sendEvent) (uint16_t eventIndexToSend);
 
     uint16_t getLeavingEventForCurrentAngle();
 
