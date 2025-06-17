@@ -67,7 +67,7 @@ class Servo_LCC : public LCC_Node_Component_Base {
     // bool eventIndexMatchesThisServo(uint16_t index);
     bool eventIndexMatches(uint16_t index) override;
 
-    bool eventIndexMatchesCurrentState(uint16_t index);
+    bool eventIndexMatchesCurrentState(uint16_t index) override;
 
     void eventReceived(uint16_t index);
 
@@ -81,14 +81,14 @@ class Servo_LCC : public LCC_Node_Component_Base {
      * Called when sending initial events.
      * Used to initialise JMRI when JMRI starts after the node has started.
      */
-    void sendEventsForCurrentState();
+    void sendEventsForCurrentState() override;
 
     void process();
 
     void print();
 
-    bool isThrown() { return (servoEasing.getCurrentAngle() == positions[THROWN].getAngle()) ? true : false; }
-    bool isClosed() { return (servoEasing.getCurrentAngle() == positions[CLOSED].getAngle()) ? true : false; }
+    bool isThrown() { return servoEasing.getCurrentAngle() == positions[THROWN].getAngle() ? true : false; }
+    bool isClosed() { return servoEasing.getCurrentAngle() == positions[CLOSED].getAngle() ? true : false; }
 
     /**
      * servoEasing has been made public to allow the following;-
