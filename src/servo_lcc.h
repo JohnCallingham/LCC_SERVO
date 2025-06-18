@@ -62,9 +62,11 @@ class Servo_LCC : public LCC_Node_Component_Base {
      */
     void setInitialAngles(uint8_t initialAngle);
 
-    // void setSendEventCallbackFunction(void (*sendEvent)(uint16_t eventIndexToSend)) { this->sendEvent = sendEvent; }
+    /**
+     * Added so that the crossover object can start the servos moving to a target position.
+     */
+    uint8_t getAngleForPosition(uint8_t position) { return positions[position].getAngle(); }
 
-    // bool eventIndexMatchesThisServo(uint16_t index);
     bool eventIndexMatches(uint16_t index) override;
 
     bool eventIndexMatchesCurrentState(uint16_t index) override;
