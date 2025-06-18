@@ -111,9 +111,6 @@ class Servo_LCC : public LCC_Node_Component_Base {
 
     std::vector<Position_LCC> positions;
 
-    // // Call back function to send events.
-    // void (*sendEvent) (uint16_t eventIndexToSend);
-
     uint16_t getLeavingEventForCurrentAngle();
 
     Servo servo;

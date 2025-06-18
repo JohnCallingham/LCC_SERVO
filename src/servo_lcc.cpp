@@ -60,7 +60,6 @@ void Servo_LCC::print() {
 }
 
 bool Servo_LCC::eventIndexMatches(uint16_t index) {
-  //Serial.printf("\nin eventIndexMatchesThisServo() for index=0x%02X", index);
   if (index == this->eventToggle) return true;
 
   for (auto & position : positions) {
@@ -73,8 +72,6 @@ bool Servo_LCC::eventIndexMatches(uint16_t index) {
 }
 
 bool Servo_LCC::eventIndexMatchesCurrentState(uint16_t index) {
-  //Serial.printf("\nin eventIndexMatchesCurrentState() for index 0x%02X", index);
-
   // Determine the position for this event index.
   for (auto & position : positions) {
     if (index == position.getEventReached()) {
@@ -125,7 +122,7 @@ void Servo_LCC::eventReceived(uint16_t index) {
   /***
    * Handle the move to a position event.
    */
-  // Determine the position for this event.
+  // Determine the target position for this event.
   for (auto & targetPosition : positions) {
     if (index == targetPosition.getEventMove()) {
       // Check if the servo is already at this target position.
