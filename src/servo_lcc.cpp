@@ -97,23 +97,23 @@ void Servo_LCC::eventReceived(uint16_t index) {
     Serial.printf(" current angle = %d", servoEasing.getCurrentAngle() );
 
     // If the servo is at position 0 (Thrown), move to position 2 (Closed).
-    if (servoEasing.getCurrentAngle() == positions[THROWN].getAngle()) {
-      servoEasing.setTargetAngle(positions[CLOSED].getAngle());
+    if (servoEasing.getCurrentAngle() == positions[POS_THROWN].getAngle()) {
+      servoEasing.setTargetAngle(positions[POS_CLOSED].getAngle());
       // Send the leaving event for this position.
-      if (sendEvent) sendEvent(positions[THROWN].getEventLeaving());
+      if (sendEvent) sendEvent(positions[POS_THROWN].getEventLeaving());
     }
 
     // If the servo is at position 1 (Mid), no movement, send mid reached event.
-    if (servoEasing.getCurrentAngle() == positions[MID].getAngle()) {
+    if (servoEasing.getCurrentAngle() == positions[POS_MID].getAngle()) {
       // Send the reached event for this position.
-      if (sendEvent) sendEvent(positions[MID].getEventReached());
+      if (sendEvent) sendEvent(positions[POS_MID].getEventReached());
     }
 
     // If the servo is at position 2 (Closed), move to position 0 (Thrown).
-    if (servoEasing.getCurrentAngle() == positions[CLOSED].getAngle()) {
-      servoEasing.setTargetAngle(positions[THROWN].getAngle());
+    if (servoEasing.getCurrentAngle() == positions[POS_CLOSED].getAngle()) {
+      servoEasing.setTargetAngle(positions[POS_THROWN].getAngle());
       // Send the leaving event for this position.
-      if (sendEvent) sendEvent(positions[CLOSED].getEventLeaving());
+      if (sendEvent) sendEvent(positions[POS_CLOSED].getEventLeaving());
     }
 
     return;
@@ -157,35 +157,35 @@ uint16_t Servo_LCC::getLeavingEventForCurrentAngle() {
 
 void Servo_LCC::handleReachedAngle(uint8_t currentAngle, AngleDirection direction) {
   // Determine the position for the current angle.
-  if (currentAngle == positions[THROWN].getAngle()) {
-    if (sendEvent) sendEvent(positions[THROWN].getEventReached());
-  } else if (currentAngle == positions[MID].getAngle()) {
+  if (currentAngle == positions[POS_THROWN].getAngle()) {
+    if (sendEvent) sendEvent(positions[POS_THROWN].getEventReached());
+  } else if (currentAngle == positions[POS_MID].getAngle()) {
     // This is the mid position so send the appropriate event based on direction.
     if (direction == AngleDirection::INCREASING_ANGLE) {
-      if (sendEvent) sendEvent(positions[MID].getEventReached());
+      if (sendEvent) sendEvent(positions[POS_MID].getEventReached());
     } else {
-      if (sendEvent) sendEvent(positions[MID].getEventLeaving());
+      if (sendEvent) sendEvent(positions[POS_MID].getEventLeaving());
     }
-  } else if (currentAngle == positions[CLOSED].getAngle()) {
-    if (sendEvent) sendEvent(positions[CLOSED].getEventReached());
+  } else if (currentAngle == positions[POS_CLOSED].getAngle()) {
+    if (sendEvent) sendEvent(positions[POS_CLOSED].getEventReached());
   }
 }
 
 void Servo_LCC::sendEventsForCurrentState() {
   // Handle the servo being in position 0 (Thrown).
-  if (servoEasing.getCurrentAngle() == positions[THROWN].getAngle()) {
-    if (sendEvent) sendEvent(positions[THROWN].getEventReached());
+  if (servoEasing.getCurrentAngle() == positions[POS_THROWN].getAngle()) {
+    if (sendEvent) sendEvent(positions[POS_THROWN].getEventReached());
   }
 
   // Handle the servo being in position 2 (Closed).
-  if (servoEasing.getCurrentAngle() == positions[CLOSED].getAngle()) {
-    if (sendEvent) sendEvent(positions[CLOSED].getEventReached());
+  if (servoEasing.getCurrentAngle() == positions[POS_CLOSED].getAngle()) {
+    if (sendEvent) sendEvent(positions[POS_CLOSED].getEventReached());
   }
 
   // Handle the servo being in position 1 (Mid).
-  if (servoEasing.getCurrentAngle() == positions[MID].getAngle()) {
-    if (sendEvent) sendEvent(positions[THROWN].getEventLeaving());
-    if (sendEvent) sendEvent(positions[CLOSED].getEventLeaving());
+  if (servoEasing.getCurrentAngle() == positions[POS_MID].getAngle()) {
+    if (sendEvent) sendEvent(positions[POS_THROWN].getEventLeaving());
+    if (sendEvent) sendEvent(positions[POS_CLOSED].getEventLeaving());
   }
 }
 

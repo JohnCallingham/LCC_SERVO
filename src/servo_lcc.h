@@ -7,11 +7,11 @@
 #include <vector>
 
 /**
- * #defines for the indexes to the positions vector.
+ * #defines for the indexes to the servo positions vector.
  */
-#define THROWN 0
-#define MID 1
-#define CLOSED 2
+#define POS_THROWN 0
+#define POS_MID 1
+#define POS_CLOSED 2
 
 /**
  * Class Position_LCC represents one position in a servo.
@@ -89,8 +89,8 @@ class Servo_LCC : public LCC_Node_Component_Base {
 
     void print();
 
-    bool isThrown() { return servoEasing.getCurrentAngle() == positions[THROWN].getAngle() ? true : false; }
-    bool isClosed() { return servoEasing.getCurrentAngle() == positions[CLOSED].getAngle() ? true : false; }
+    bool isThrown() { return servoEasing.getCurrentAngle() == positions[POS_THROWN].getAngle() ? true : false; }
+    bool isClosed() { return servoEasing.getCurrentAngle() == positions[POS_CLOSED].getAngle() ? true : false; }
 
     /**
      * servoEasing has been made public to allow the following;-
@@ -106,14 +106,14 @@ class Servo_LCC : public LCC_Node_Component_Base {
      */
     ServoEasing servoEasing;
 
+    uint16_t getLeavingEventForCurrentAngle(); // Made public so it can be used by the crossover object.
+
   private:
     uint8_t servoNumber;
     uint8_t pin;
     uint16_t eventToggle;
 
     std::vector<Position_LCC> positions;
-
-    uint16_t getLeavingEventForCurrentAngle();
 
     Servo servo;
 };
