@@ -38,6 +38,10 @@ void Servo_LCC::addPosition(uint8_t positionNumber,
                         eventReached));
 }
 
+void Servo_LCC::updatePosition(uint8_t positionNumber, uint8_t positionAngle) {
+  positions[positionNumber].setAngle(positionAngle);
+}
+
 void Servo_LCC::setInitialAngles(uint8_t initialAngle) {
   servoEasing.setMidAngle(initialAngle);
   servoEasing.setInitialAngle(initialAngle);

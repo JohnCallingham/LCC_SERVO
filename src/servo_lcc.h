@@ -31,6 +31,7 @@ class Position_LCC {
     uint16_t getEventMove() { return this->eventMove; }
     uint16_t getEventLeaving() { return this->eventLeaving; }
     uint16_t getEventReached() { return this->eventReached; }
+    void setAngle(uint8_t angle) { this->positionAngle = angle; }
 
   private:
     uint8_t positionNumber;
@@ -54,6 +55,9 @@ class Servo_LCC : public LCC_Node_Component_Base {
                           uint16_t eventMove,
                           uint16_t eventLeaving,
                           uint16_t eventReached);
+
+    // Called when a configuration change is made to the servo angles.
+    void updatePosition(uint8_t positionNumber, uint8_t positionAngle);
     
     void setEventToggle(uint16_t eventToggle) { this->eventToggle = eventToggle; }
 
