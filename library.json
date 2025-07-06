@@ -3,6 +3,7 @@
 "version": "0.1.1",
 "dependencies":
   {
-    "SERVO_EASING": "https://github.com/JohnCallingham/SERVO_EASING.git"
+    "SERVO_EASING": "https://github.com/JohnCallingham/SERVO_EASING.git",
+    "LCC_NODE_COMPONENT_BASE": "https://github.com/JohnCallingham/LCC_NODE_COMPONENT_BASE.git"
   }
 }
