@@ -119,7 +119,7 @@ class Servo_LCC : public LCC_Node_Component_Base {
 
     std::vector<Position_LCC> positions;
 
-    Servo servo;
+    // Servo servo; moved to servo easing.
 };
 
 #endif

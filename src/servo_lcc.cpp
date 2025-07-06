@@ -18,9 +18,10 @@ Servo_LCC::Servo_LCC(uint8_t servoNumber, uint8_t pin) {
   this->servoNumber = servoNumber;
   this->pin = pin;
 
-  servo.attach(this->pin);
+  // servo.attach(this->pin);
 
-  servoEasing.initialise(servoNumber, &servo, pin);
+  // servoEasing.initialise(servoNumber, &servo, pin);
+  // servoEasing.initialise(servoNumber, pin); moved to setInitialAngles().
 }
 
 void Servo_LCC::addPosition(uint8_t positionNumber,
@@ -43,6 +44,8 @@ void Servo_LCC::updatePosition(uint8_t positionNumber, uint8_t positionAngle) {
 }
 
 void Servo_LCC::setInitialAngles(uint8_t initialAngle) {
+  servoEasing.initialise(servoNumber, pin);
+
   servoEasing.setMidAngle(initialAngle);
   servoEasing.setInitialAngle(initialAngle);
   servoEasing.setTargetAngle(initialAngle);
@@ -50,7 +53,7 @@ void Servo_LCC::setInitialAngles(uint8_t initialAngle) {
 
 void Servo_LCC::print() {
   Serial.printf("\nServo pin=%d", this->pin);
-  Serial.printf("\nServo attached: %s", servo.attached() ? "true" : "false");
+  // Serial.printf("\nServo attached: %s", servo.attached() ? "true" : "false");
 
   for (auto & position : positions) {
     Serial.printf("\n Position number=%d", position.getNumber());
