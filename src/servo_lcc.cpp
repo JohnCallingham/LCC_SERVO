@@ -20,7 +20,7 @@ Servo_LCC::Servo_LCC(uint8_t servoNumber, uint8_t pin) {
 
   servo.attach(this->pin);
 
-  servoEasing.initialise(servoNumber, &servo);
+  servoEasing.initialise(servoNumber, &servo, pin);
 }
 
 void Servo_LCC::addPosition(uint8_t positionNumber,
