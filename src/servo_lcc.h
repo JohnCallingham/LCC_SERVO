@@ -58,6 +58,9 @@ class Servo_LCC : public LCC_Node_Component_Base {
 
     // Called when a configuration change is made to the servo angles.
     void updatePosition(uint8_t positionNumber, uint8_t positionAngle);
+
+    // Called when a configuration change is made to the servo speed.
+    void updateDelaymS(unsigned long delaymS) { this->servoEasing.setDelaymS(delaymS); }
     
     void setEventToggle(uint16_t eventToggle) { this->eventToggle = eventToggle; }
 

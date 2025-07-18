@@ -50,7 +50,7 @@ void Servo_LCC::setInitialAngles(uint8_t initialAngle) {
   servoEasing.setInitialAngle(initialAngle);
   servoEasing.setTargetAngle(initialAngle);
 
-  servoEasing.setDelaymS(50);
+  //servoEasing.setDelaymS(50); now user configurable.
 }
 
 void Servo_LCC::print() {
