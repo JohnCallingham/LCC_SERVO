@@ -4,6 +4,12 @@ This component is part of a suite of components which can be used as part of a p
 
 The file servo_lcc.h contains two classes. Class Servo_LCC represents one servo and class Position_LCC represents one position for the servo.
 
+This component has two dependencies;-
+- SERVO_EASING: https://github.com/JohnCallingham/SERVO_EASING.git
+- LCC_NODE_COMPONENT_BASE: https://github.com/JohnCallingham/LCC_NODE_COMPONENT_BASE.git
+
+These are automatically downloaded when using PlatformIO.
+
 ## PlatformIO installation
 
 It can be installed in PlatformIO by adding the following line to platform.ini;-
