@@ -8,7 +8,7 @@ The file servo_lcc.h contains two classes. Class Servo_LCC represents one servo 
 
 It can be installed in PlatformIO by adding the following line to platform.ini;-
 
-lib_deps = https://github.com/JohnCallingham/LCC_TOTI.git
+lib_deps = https://github.com/JohnCallingham/LCC_SERVO.git
 
 ## Arduino IDE installation
 
