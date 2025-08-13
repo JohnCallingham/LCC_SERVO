@@ -65,9 +65,16 @@ class Servo_LCC : public LCC_Node_Component_Base {
     void setEventToggle(uint16_t eventToggle) { this->eventToggle = eventToggle; }
 
     /**
-     * Allows the initial angle, target angle and mid angle to all be set to position 1 (Mid).
+     * Allows the initial angle and mid angle to be set to position 1 (Mid).
+     * This causes the servo to snap to the mid angle on startup.
      */
     void setInitialAngles(uint8_t initialAngle);
+
+    /**
+     * Sets the target angle to one of the positions (thrown, mid or closed).
+     * This causes the servo to ease to this angle on startup.
+     */
+    void setInitialPosition(uint8_t initialPosition);
 
     /**
      * Added so that the crossover object can start the servos moving to a target position.

@@ -47,10 +47,19 @@ void Servo_LCC::setInitialAngles(uint8_t initialAngle) {
   servoEasing.initialise(servoNumber, pin);
 
   servoEasing.setMidAngle(initialAngle);
-  servoEasing.setInitialAngle(initialAngle);
-  servoEasing.setTargetAngle(initialAngle);
 
-  //servoEasing.setDelaymS(50); now user configurable.
+  // Set the angle to which the servo snaps on startup, usually to the mid position.
+  servoEasing.setInitialAngle(initialAngle);
+
+  //servoEasing.setTargetAngle(initialAngle); // Changed to closed. Moved to setInitialPosition().
+
+  // // Set the target angle so that the servo eases to this angle on startup.
+  // servoEasing.setTargetAngle(positions[POS_CLOSED].getAngle());
+}
+
+void Servo_LCC::setInitialPosition(uint8_t initialPosition) {
+  // Set the target angle so that the servo eases to this position on startup.
+  servoEasing.setTargetAngle(positions[initialPosition].getAngle());
 }
 
 void Servo_LCC::print() {
@@ -194,11 +203,13 @@ void Servo_LCC::sendEventsForCurrentState() {
   // Handle the servo being in position 0 (Thrown).
   if (servoEasing.getCurrentAngle() == positions[POS_THROWN].getAngle()) {
     if (sendEvent) sendEvent(positions[POS_THROWN].getEventReached());
+    if (sendEvent) sendEvent(positions[POS_CLOSED].getEventLeaving());
   }
 
   // Handle the servo being in position 2 (Closed).
   if (servoEasing.getCurrentAngle() == positions[POS_CLOSED].getAngle()) {
     if (sendEvent) sendEvent(positions[POS_CLOSED].getEventReached());
+    if (sendEvent) sendEvent(positions[POS_THROWN].getEventLeaving());
   }
 
   // Handle the servo being in position 1 (Mid).
