@@ -91,7 +91,7 @@ class Servo_LCC : public LCC_Node_Component_Base {
      * Called when the ServoEasing object has moved its servo to any position.
      * It determines the correct event and sends it.
      */
-    void handleReachedAngle(uint8_t currentAngle, AngleDirection direction);
+    void handleReachedAngle(uint8_t currentAngle, ServoEasing::AngleDirection direction);
 
     /***
      * Called when sending initial events.
@@ -128,8 +128,6 @@ class Servo_LCC : public LCC_Node_Component_Base {
     uint16_t eventToggle;
 
     std::vector<Position_LCC> positions;
-
-    // Servo servo; moved to servo easing.
 };
 
 #endif

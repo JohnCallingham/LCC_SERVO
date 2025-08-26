@@ -17,11 +17,6 @@ Position_LCC::Position_LCC(uint8_t positionNumber,
 Servo_LCC::Servo_LCC(uint8_t servoNumber, uint8_t pin) {
   this->servoNumber = servoNumber;
   this->pin = pin;
-
-  // servo.attach(this->pin);
-
-  // servoEasing.initialise(servoNumber, &servo, pin);
-  // servoEasing.initialise(servoNumber, pin); moved to setInitialAngles().
 }
 
 void Servo_LCC::addPosition(uint8_t positionNumber,
@@ -50,21 +45,15 @@ void Servo_LCC::setInitialAngles(uint8_t initialAngle) {
 
   // Set the angle to which the servo snaps on startup, usually to the mid position.
   servoEasing.setInitialAngle(initialAngle);
-
-  //servoEasing.setTargetAngle(initialAngle); // Changed to closed. Moved to setInitialPosition().
-
-  // // Set the target angle so that the servo eases to this angle on startup.
-  // servoEasing.setTargetAngle(positions[POS_CLOSED].getAngle());
 }
 
 void Servo_LCC::setInitialPosition(uint8_t initialPosition) {
   // Set the target angle so that the servo eases to this position on startup.
-  servoEasing.setTargetAngle(positions[initialPosition].getAngle());
+  servoEasing.easeTo(positions[initialPosition].getAngle());
 }
 
 void Servo_LCC::print() {
   Serial.printf("\nServo pin=%d", this->pin);
-  // Serial.printf("\nServo attached: %s", servo.attached() ? "true" : "false");
 
   for (auto & position : positions) {
     Serial.printf("\n Position number=%d", position.getNumber());
@@ -117,7 +106,8 @@ void Servo_LCC::eventReceived(uint16_t index) {
 
     // If the servo is at position 0 (Thrown), move to position 2 (Closed).
     if (servoEasing.getCurrentAngle() == positions[POS_THROWN].getAngle()) {
-      servoEasing.setTargetAngle(positions[POS_CLOSED].getAngle());
+      // servoEasing.setTargetAngle(positions[POS_CLOSED].getAngle());
+      servoEasing.easeTo(positions[POS_CLOSED].getAngle());
       // Send the leaving event for this position.
       Serial.printf("\n%6ld Servo %d sending leaving event for position thrown", millis(), servoNumber);
       if (sendEvent) sendEvent(positions[POS_THROWN].getEventLeaving());
@@ -132,7 +122,8 @@ void Servo_LCC::eventReceived(uint16_t index) {
 
     // If the servo is at position 2 (Closed), move to position 0 (Thrown).
     if (servoEasing.getCurrentAngle() == positions[POS_CLOSED].getAngle()) {
-      servoEasing.setTargetAngle(positions[POS_THROWN].getAngle());
+      // servoEasing.setTargetAngle(positions[POS_THROWN].getAngle());
+      servoEasing.easeTo(positions[POS_THROWN].getAngle());
       // Send the leaving event for this position.
       Serial.printf("\n%6ld Servo %d sending leaving event for position closed", millis(), servoNumber);
       if (sendEvent) sendEvent(positions[POS_CLOSED].getEventLeaving());
@@ -157,7 +148,8 @@ void Servo_LCC::eventReceived(uint16_t index) {
         Serial.printf("\nServo %d moving to position %d", servoNumber, targetPosition.getNumber());
 
         // Make the servo move to this position.
-        servoEasing.setTargetAngle(targetPosition.getAngle());
+        // servoEasing.setTargetAngle(targetPosition.getAngle());
+        servoEasing.easeTo(targetPosition.getAngle());
 
         // Send the leaving event for this position.
         Serial.printf("\n%6ld Srrvo %d sending leaving event", millis(), servoNumber);
@@ -179,14 +171,14 @@ uint16_t Servo_LCC::getLeavingEventForCurrentAngle() {
   return 0; // To keep the compiler happy!
 }
 
-void Servo_LCC::handleReachedAngle(uint8_t currentAngle, AngleDirection direction) {
+void Servo_LCC::handleReachedAngle(uint8_t currentAngle, ServoEasing::AngleDirection direction) {
   // Determine the position for the current angle.
   if (currentAngle == positions[POS_THROWN].getAngle()) {
     Serial.printf("\n%6ld Servo %d sending reached event for position thrown", millis(), servoNumber);
     if (sendEvent) sendEvent(positions[POS_THROWN].getEventReached());
   } else if (currentAngle == positions[POS_MID].getAngle()) {
     // This is the mid position so send the appropriate event based on direction.
-    if (direction == AngleDirection::INCREASING_ANGLE) {
+    if (direction == ServoEasing::AngleDirection::INCREASING_ANGLE) {
       Serial.printf("\n%6ld Servo number %d sending reached event for position mid", millis(), servoNumber);
       if (sendEvent) sendEvent(positions[POS_MID].getEventReached());
     } else {
