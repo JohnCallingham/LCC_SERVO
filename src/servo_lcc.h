@@ -99,7 +99,8 @@ class Servo_LCC : public LCC_Node_Component_Base {
      */
     void sendEventsForCurrentState() override;
 
-    void process();
+    // void process();
+    void loop();
 
     void print();
 

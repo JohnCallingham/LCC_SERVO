@@ -211,6 +211,6 @@ void Servo_LCC::sendEventsForCurrentState() {
   }
 }
 
-void Servo_LCC::process() {
+void Servo_LCC::loop() {
   servoEasing.update();
 }
