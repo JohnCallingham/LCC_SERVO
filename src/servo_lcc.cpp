@@ -212,5 +212,5 @@ void Servo_LCC::sendEventsForCurrentState() {
 }
 
 void Servo_LCC::loop() {
-  servoEasing.update();
+  servoEasing.loop();
 }
