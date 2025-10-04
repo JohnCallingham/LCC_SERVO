@@ -68,8 +68,14 @@ void Servo_LCC::print() {
 }
 
 bool Servo_LCC::eventIndexMatches(uint16_t index) {
+  // Check for one of the testing event indexes.
+  if ((index == this->testStartEventIndex) ||
+      (index == this->testStopEventIndex)) return true;
+
+  // Check for the toggle event index.
   if (index == this->eventToggle) return true;
 
+  // Check for one of the position event indexes.
   for (auto & position : positions) {
     if ((index == position.getEventMove()) ||
         (index == position.getEventLeaving()) ||
@@ -96,6 +102,16 @@ bool Servo_LCC::eventIndexMatchesCurrentState(uint16_t index) {
 }
 
 void Servo_LCC::eventReceived(uint16_t index) {
+  /**
+   * Handle the test cycle start and stop events.
+   */
+  if (index == testStartEventIndex) {
+    Serial.printf("\nServo %d starting the testing cycle.", servoNumber);
+  }
+  if (index == testStopEventIndex) {
+    Serial.printf("\nServo %d stopping the testing cycle.", servoNumber);
+  }
+
   /**
    * Handle the toggle event.
    */
