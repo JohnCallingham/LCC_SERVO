@@ -107,10 +107,29 @@ void Servo_LCC::eventReceived(uint16_t index) {
    */
   if (index == testStartEventIndex) {
     Serial.printf("\nServo %d starting the testing cycle.", servoNumber);
+
+    // Set the first test.
+    currentTest = MOVE_TO_THROWN;
+
+    // Set the timer so that testing starts immediately.
+    testingTimer = millis();
+
+    testing = true;
   }
   if (index == testStopEventIndex) {
     Serial.printf("\nServo %d stopping the testing cycle.", servoNumber);
+
+    // Leave the servo at the mid position.
+    servoEasing.moveTo(positions[POS_MID].getAngle());
+
+    // TO DO: need to send the appropriate leave and reached events.
+    // The servo may be moving or not !!!
+
+    testing = false;
   }
+
+  // Stop normal operation if testing.
+  if (testing) return;
 
   /**
    * Handle the toggle event.
@@ -229,4 +248,46 @@ void Servo_LCC::sendEventsForCurrentState() {
 
 void Servo_LCC::loop() {
   servoEasing.loop();
+  if (testing) testLoop();
+}
+
+void Servo_LCC::testLoop() {
+  if (millis() < testingTimer) return;
+
+  // Time to move to the next part of the test cycle.
+
+  switch (currentTest) { // ?? should be nextTest ??
+    case MOVE_TO_THROWN:
+      if (sendEvent) sendEvent(getLeavingEventForCurrentAngle());
+      servoEasing.easeTo(positions[POS_THROWN].getAngle());
+      testingTimer = millis() + 1000;
+      currentTest = WAIT_FOR_THROWN;
+      break;
+    
+    case WAIT_FOR_THROWN:
+      // When at thrown move to the next part of the test cycle.
+      if (servoEasing.getCurrentAngle() == positions[POS_THROWN].getAngle()) {
+        testingTimer = millis() + 2000;
+        currentTest = MOVE_TO_CLOSED;
+      }
+      break;
+    
+    case MOVE_TO_CLOSED:
+      if (sendEvent) sendEvent(getLeavingEventForCurrentAngle());
+      servoEasing.easeTo(positions[POS_CLOSED].getAngle());
+      testingTimer = millis() + 1000;
+      currentTest = WAIT_FOR_CLOSED;
+      break;
+    
+    case WAIT_FOR_CLOSED:
+      // When at closed move to the next part of the test cycle.
+      if (servoEasing.getCurrentAngle() == positions[POS_CLOSED].getAngle()) {
+        testingTimer = millis() + 2000;
+        currentTest = MOVE_TO_THROWN;
+      }
+      break;
+    
+    default:
+      break;
+  }
 }

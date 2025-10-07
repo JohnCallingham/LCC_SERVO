@@ -129,6 +129,12 @@ class Servo_LCC : public LCC_Node_Component_Base {
     uint16_t eventToggle;
 
     std::vector<Position_LCC> positions;
+
+    // Define the test cycles and track the current test cycle.
+    enum Test { MOVE_TO_THROWN, WAIT_FOR_THROWN, MOVE_TO_CLOSED, WAIT_FOR_CLOSED };
+    Test currentTest;
+
+    void testLoop();
 };
 
 #endif
