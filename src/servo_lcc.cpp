@@ -122,8 +122,13 @@ void Servo_LCC::eventReceived(uint16_t index) {
     // Leave the servo at the mid position.
     servoEasing.moveTo(positions[POS_MID].getAngle());
 
-    // TO DO: need to send the appropriate leave and reached events.
-    // The servo may be moving or not !!!
+    // Send the leaving events for both thrown and closed.
+    // Send the reached event for the mid position.
+    if (sendEvent) {
+      sendEvent(positions[POS_THROWN].getEventLeaving());
+      sendEvent(positions[POS_CLOSED].getEventLeaving());
+      sendEvent(positions[POS_MID].getEventReached());
+    }
 
     testing = false;
   }
