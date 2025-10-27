@@ -3,6 +3,7 @@
 The servo will only move if it is not locked.
 
 ``` mermaid
+
 flowchart TD;
 %% define the nodes ...
 A([Start])
@@ -35,8 +36,4 @@ K --> J
 
 D --> L
 G --> L
-
-
-
-
 ```
