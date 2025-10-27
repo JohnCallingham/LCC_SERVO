@@ -1,6 +1,18 @@
 #ifndef SERVO_LCC_H
 #define SERVO_LCC_H
 
+/**
+ * TO DO: 
+ * 
+ * Each servo to have a boolean locked flag.
+ * Also, a new event, “Check, Lock and Move” which checks if the item is locked.
+ *
+ * If locked, an event is sent to indicate that the item is locked and didn’t move.
+ * If not locked, the item is locked and moved. When the move has completed the appropriate event is sent as normal.
+ *
+ * A new event will allow the item to be unlocked.
+ */
+
 #include <Arduino.h>
 #include "LCC_Node_Component_Base.h"
 #include "servo_easing.h"
@@ -23,6 +35,7 @@ class Position_LCC {
                 const char *positionDescription,
                 uint8_t positionAngle,
                 uint16_t eventMove,
+                uint16_t eventMoveConditional,
                 uint16_t eventLeaving,
                 uint16_t eventReached);
 
@@ -30,6 +43,7 @@ class Position_LCC {
     const char *getDescription() { return this->positionDescription; }
     uint8_t getAngle() { return this->positionAngle; }
     uint16_t getEventMove() { return this->eventMove; }
+    uint16_t getEventMoveConditional() { return this->eventMoveConditional; }
     uint16_t getEventLeaving() { return this->eventLeaving; }
     uint16_t getEventReached() { return this->eventReached; }
     void setAngle(uint8_t angle) { this->positionAngle = angle; }
@@ -39,6 +53,7 @@ class Position_LCC {
     const char *positionDescription;
     uint8_t positionAngle;
     uint16_t eventMove;
+    uint16_t eventMoveConditional;
     uint16_t eventLeaving;
     uint16_t eventReached;
 };
@@ -54,8 +69,9 @@ class Servo_LCC : public LCC_Node_Component_Base {
                           const char *positionDescription,
                           uint8_t positionAngle,
                           uint16_t eventMove,
-                          uint16_t eventLeaving,
-                          uint16_t eventReached);
+                          uint16_t eventMoveConditional,
+                          uint16_t eventReached,
+                          uint16_t eventLeaving);
 
     // Called when a configuration change is made to the servo angles.
     void updatePosition(uint8_t positionNumber, uint8_t positionAngle);
@@ -64,6 +80,8 @@ class Servo_LCC : public LCC_Node_Component_Base {
     void updateDelaymS(unsigned long delaymS) { this->servoEasing.setDelaymS(delaymS); }
     
     void setEventToggle(uint16_t eventToggle) { this->eventToggle = eventToggle; }
+    void setEventUnLock(uint16_t eventUnLock) { this->eventUnLock = eventUnLock; }
+    void setEventLocked(uint16_t eventLocked) { this->eventLocked = eventLocked; }
 
     /**
      * Allows the initial angle and mid angle to be set to position 1 (Mid).
@@ -127,7 +145,10 @@ class Servo_LCC : public LCC_Node_Component_Base {
   private:
     uint8_t servoNumber;
     uint8_t pin;
-    uint16_t eventToggle;
+    uint16_t eventToggle; // If received causes the servo to move to its other position.
+    uint16_t eventUnLock; // If received resets the locked flag.
+    uint16_t eventLocked; // Sent if the servo cannot move as it is locked.
+    bool servoLocked = false;
 
     std::vector<Position_LCC> positions;
 

@@ -4,12 +4,14 @@ Position_LCC::Position_LCC(uint8_t positionNumber,
                 const char *positionDescription,
                 uint8_t positionAngle,
                 uint16_t eventMove,
+                uint16_t eventMoveConditional,
                 uint16_t eventLeaving,
                 uint16_t eventReached) {
   this->positionNumber = positionNumber;
   this->positionDescription = positionDescription;
   this->positionAngle = positionAngle;
   this->eventMove = eventMove;
+  this->eventMoveConditional = eventMoveConditional;
   this->eventLeaving = eventLeaving;
   this->eventReached = eventReached;
 }
@@ -23,13 +25,15 @@ void Servo_LCC::addPosition(uint8_t positionNumber,
                           const char *positionDescription,
                           uint8_t positionAngle,
                           uint16_t eventMove,
-                          uint16_t eventLeaving,
-                          uint16_t eventReached) {
+                          uint16_t eventMoveConditional,
+                          uint16_t eventReached,
+                          uint16_t eventLeaving) {
 
   positions.push_back(Position_LCC (positionNumber,
                         positionDescription,
                         positionAngle,
                         eventMove,
+                        eventMoveConditional,
                         eventLeaving,
                         eventReached));
 }
@@ -72,12 +76,15 @@ bool Servo_LCC::eventIndexMatches(uint16_t index) {
   if ((index == this->testStartEventIndex) ||
       (index == this->testStopEventIndex)) return true;
 
-  // Check for the toggle event index.
-  if (index == this->eventToggle) return true;
+  // Check for one of the servo event indexes.
+  if ((index == this->eventToggle) ||
+      (index == this->eventUnLock) ||
+      (index == this->eventLocked)) return true;
 
   // Check for one of the position event indexes.
   for (auto & position : positions) {
     if ((index == position.getEventMove()) ||
+        (index == position.getEventMoveConditional()) ||
         (index == position.getEventLeaving()) ||
         (index == position.getEventReached())) return true;
   }
@@ -180,7 +187,7 @@ void Servo_LCC::eventReceived(uint16_t index) {
   }
 
   /***
-   * Handle the move to a position event.
+   * Handle the 'unconditional move to a position' event.
    */
   // Determine the target position for this event.
   for (auto & targetPosition : positions) {
