@@ -186,7 +186,7 @@ void Servo_LCC::eventReceived(uint16_t index) {
     return;
   }
 
-  /***
+  /**
    * Handle the 'unconditional move to a position' event.
    */
   // Determine the target position for this event.
@@ -202,12 +202,48 @@ void Servo_LCC::eventReceived(uint16_t index) {
         Serial.printf("\nServo %d moving to position %d", servoNumber, targetPosition.getNumber());
 
         // Make the servo move to this position.
-        // servoEasing.setTargetAngle(targetPosition.getAngle());
         servoEasing.easeTo(targetPosition.getAngle());
 
         // Send the leaving event for this position.
-        Serial.printf("\n%6ld Srrvo %d sending leaving event", millis(), servoNumber);
+        Serial.printf("\n%6ld Servo %d sending leaving event", millis(), servoNumber);
         if (sendEvent) sendEvent(getLeavingEventForCurrentAngle());
+      }
+    }
+  }
+
+  /**
+   * Handle the 'conditional move to a position' event.
+   */
+  // Determine the target position for this event.
+  for (auto & targetPosition : positions) {
+    if (index == targetPosition.getEventMoveConditional()) {
+      // Check if the servo is locked.
+      if (servoLocked) {
+        // Send the servo locked event.
+        Serial.printf("\n%6ld Servo %d sending locked event", millis(), servoNumber);
+        if (sendEvent) sendEvent(eventLocked);
+      } else {
+        // The servo is not locked.
+
+        // Lock the servo to prevent other movements from changing the position of this servo.
+        servoLocked = true;
+
+        // Check if the servo is already at this target position.
+        if (servoEasing.getCurrentAngle() == targetPosition.getAngle()) {
+          // Servo is already at the target position so just send the reached event.
+          Serial.printf("\n%6ld Servo %d sending reached event for position %d", millis(), servoNumber, targetPosition.getNumber());
+          if (sendEvent) sendEvent(targetPosition.getEventReached());
+        } else {
+          // Start the servo moving to this position.
+          Serial.printf("\nServo %d moving to position %d", servoNumber, targetPosition.getNumber());
+
+          // Make the servo move to this position.
+          servoEasing.easeTo(targetPosition.getAngle());
+
+          // Send the leaving event for this position.
+          Serial.printf("\n%6ld Servo %d sending leaving event", millis(), servoNumber);
+          if (sendEvent) sendEvent(getLeavingEventForCurrentAngle());
+        }
       }
     }
   }
