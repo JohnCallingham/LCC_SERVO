@@ -19,21 +19,3 @@ lib_deps = https://github.com/JohnCallingham/LCC_SERVO.git
 ## Arduino IDE installation
 
 It can be installed into the Arduino IDE by downloading the .zip file and adding to the Arduino library using Sketch -> Include Library -> Add .Zip Library
-
-## Flowcharts
-
-### Unconditional move from Closed to Thrown
-
-``` mermaid
-graph TD;
-  A[Unconditional move to thrown event received]
-  A --> B{Is the<br>servo already<br>at thrown?}
-  B --> |Yes| F
-  B --> |No| C[Send closed leaving event]
-  C --> D
-  D[Start servo moving towards thrown]
-  D --> E{Has the<br>servo reached<br>thrown?}
-  E ----> |Yes| F[Send reached thrown event]
-  E --> |No| G[Continue moving<br>towards thrown]
-  G --> E
-```
