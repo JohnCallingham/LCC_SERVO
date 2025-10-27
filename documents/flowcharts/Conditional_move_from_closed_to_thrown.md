@@ -12,8 +12,8 @@ C{Is the servo<br>locked?}
 D[Send servo locked event]
 E[Lock servo]
 F{Is the<br>servo already<br>at thrown?}
-G[Send thrown reached event]
-H[Send closed leaving event]
+G[Send reached thrown event]
+H[Send leaving closed event]
 I[Start servo moving<br>towards thrown]
 J{Has the<br>servo reached<br>thrown?}
 K[Continue moving<br>towards thrown]
