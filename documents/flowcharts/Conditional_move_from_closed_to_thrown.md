@@ -18,6 +18,7 @@ I[Start servo moving<br>towards thrown]
 J{Has the<br>servo reached<br>thrown?}
 K[Continue moving<br>towards thrown]
 L([End])
+M[Send servo locked event]
 
 
 %% ... then define the links.
@@ -25,9 +26,10 @@ A --> B
 B --> C
 C --> |Yes| D
 C --> |No| E
-E --> F
-F ----> |Yes| G
-F --> |No| H
+E --> M
+M --> F
+F --> |Yes| G
+F ----> |No| H
 H --> I
 I --> J
 J --> |Yes| G

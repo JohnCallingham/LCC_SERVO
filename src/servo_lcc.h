@@ -152,6 +152,13 @@ class Servo_LCC : public LCC_Node_Component_Base {
 
     std::vector<Position_LCC> positions;
 
+    void eventReceivedTestStart();
+    void eventReceivedTestStop();
+    void eventReceivedToggle();
+    void eventReceivedUnLock();
+    void eventReceivedMove(Position_LCC targetPosition);
+    void eventReceivedConditionalMove(Position_LCC targetPosition);
+
     // Define the test cycles and track the current test cycle.
     enum Test { MOVE_TO_THROWN, WAIT_FOR_THROWN, MOVE_TO_CLOSED, WAIT_FOR_CLOSED };
     Test currentTest;
