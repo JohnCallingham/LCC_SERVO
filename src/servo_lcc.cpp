@@ -146,7 +146,7 @@ void Servo_LCC::eventReceived(uint16_t index) {
 }
 
 void Servo_LCC::eventReceivedTestStart() {
-  Serial.printf("\nServo %d starting the testing cycle.", servoNumber);
+  Serial.printf("\n%6ld Servo %d starting the testing cycle", millis(), servoNumber);
 
   // Set the first test.
   currentTest = MOVE_TO_THROWN;
@@ -158,7 +158,7 @@ void Servo_LCC::eventReceivedTestStart() {
 }
 
 void Servo_LCC::eventReceivedTestStop() {
-  Serial.printf("\nServo %d stopping the testing cycle.", servoNumber);
+  Serial.printf("\n%6ld Servo %d stopping the testing cycle", millis(), servoNumber);
 
   // Leave the servo at the mid position.
   servoEasing.moveTo(positions[POS_MID].getAngle());
@@ -176,7 +176,7 @@ void Servo_LCC::eventReceivedTestStop() {
 
 void Servo_LCC::eventReceivedToggle() {
   // Start the servo moving to the other position.
-  Serial.printf("\nServo %d moving to the other position ", servoNumber);
+  Serial.printf("\n%6ld Servo %d moving to the other position ", millis(), servoNumber);
   Serial.printf(" current angle = %d", servoEasing.getCurrentAngle() );
 
   // If the servo is at position 0 (Thrown), move to position 2 (Closed).
@@ -226,7 +226,7 @@ void Servo_LCC::eventReceivedMove(Position_LCC targetPosition) {
     if (sendEvent) sendEvent(targetPosition.getEventReached());
   } else {
     // Start the servo moving to this position.
-    Serial.printf("\nServo %d moving to position %d", servoNumber, targetPosition.getNumber());
+    Serial.printf("\n%6ld Servo %d moving to position %d", millis(), servoNumber, targetPosition.getNumber());
 
     // Make the servo move to this position.
     servoEasing.easeTo(targetPosition.getAngle());
@@ -261,7 +261,7 @@ void Servo_LCC::eventReceivedConditionalMove(Position_LCC targetPosition) {
       if (sendEvent) sendEvent(targetPosition.getEventReached());
     } else {
       // Start the servo moving to this position.
-      Serial.printf("\nServo %d moving to position %d", servoNumber, targetPosition.getNumber());
+      Serial.printf("\n%6ld Servo %d moving to position %d", millis(), servoNumber, targetPosition.getNumber());
 
       // Make the servo move to this position.
       servoEasing.easeTo(targetPosition.getAngle());
