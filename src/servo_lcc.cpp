@@ -109,6 +109,10 @@ bool Servo_LCC::eventIndexMatchesCurrentState(uint16_t index) {
 }
 
 void Servo_LCC::eventReceived(uint16_t index) {
+  if (logMessage) {
+    logMessage("\n%6ld [Servo_LCC::eventReceived] called with index=0x%02X for servo %d", millis(), index, servoNumber);
+  }
+
   /**
    * Handle the test cycle start and stop events.
    */
